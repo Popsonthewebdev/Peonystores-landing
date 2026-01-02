@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="icon" type="image/png" href="images/favicon.png">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Peony Stores</title>
@@ -14,10 +13,25 @@
       font-family: "Segoe UI", Arial, sans-serif;
     }
 
-    body {
-      background-color: #f9f9f9;
-      color: #222;
-    }
+  /*  body {
+  background: linear-gradient(rgba(254,242,248,0.7), rgba(127,0,255,0.7)),
+              url("images/back.jpg") center/cover fixed no-repeat;
+  background-blend-mode: overlay;
+  opacity: 10;
+}
+*/
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url("images/back.jpg") center/cover no-repeat fixed;
+  background-size: cover;
+  opacity: 0.15;  /* <-- subtle opacity */
+  z-index: -1;     /* sits behind all content */
+}
 
     /* ===== HEADER ===== */
     header {
@@ -81,6 +95,37 @@
         font-size: 16px;
       }
     }
+    .card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card img {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+}
+
+.card:hover img {
+  transform: scale(1.05);
+}
+
+.card-overlay {
+  position: absolute;
+  bottom: 15px;
+  left: 15px;
+  color: #fff;
+  font-size: 20px;
+  font-weight: 700;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  background: rgba(0,0,0,0.2);
+  padding: 8px 12px;
+  border-radius: 8px;
+}
+
   </style>
 </head>
 
@@ -101,13 +146,60 @@
 
     <a href="Shop.html" class="btn">Shop Now</a>
   </section>
+  <section class="categories">
+    <h2 style="text-align:center; margin-bottom:40px; color:#7f00ff;">Our Collections</h2>
+    <div class="category-grid" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:25px; max-width:1100px; margin:0 auto;">
+      <div class="card"><img src="https://images.pexels.com/photos/3786143/pexels-photo-3786143.jpeg" alt="Hair Care"><div class="card-overlay">Hair Care</div></div>
+      <div class="card"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ8r14bMhYjodzZVsKCmaLbBv5c1jWDz1VcYw&s" alt="Beauty & Skincare"><div class="card-overlay">Beauty & Skincare</div></div>
+      <div class="card"><img src="https://queenhair.ng/wp-content/uploads/2021/11/Hair-extension-brands-in-Nigeria_1.jpg" alt="Hair Extensions"><div class="card-overlay">Hair Extensions</div></div>
+      <div class="card"><img src="https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg" alt="Hair Tools"><div class="card-overlay">Hair Tools</div></div>
+      <div class="card"><img src="https://images.pexels.com/photos/1526815/pexels-photo-1526815.jpeg" alt="Unisex Wears"><div class="card-overlay">Unisex Wears</div></div>
+      <div class="card"><img src="https://www.theprintroom.nz/cdn/shop/articles/tpr_totes_2021.jpg?v=1622499228" alt="Bags & Accessories"><div class="card-overlay">Bags & Accessories</div></div>
+      <div class="card"><img src="https://images.pexels.com/photos/1438765/pexels-photo-1438765.jpeg" alt="Food Corner"><div class="card-overlay">Food Corner</div></div>
+      <div class="card"><img src="https://images.pexels.com/photos/3769144/pexels-photo-3769144.jpeg" alt="Others"><div class="card-overlay">Others</div></div>
+    </div>
+  </section>
+  <section class="why-us" style="padding:80px 20px; background:#f3f3f3; text-align:center;">
+    <h2 style="color:#7f00ff; margin-bottom:50px;">Why Choose Peony Stores?</h2>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:30px; max-width:1000px; margin:0 auto;">
+      <div>
+        <h3>Premium Products</h3>
+        <p>Carefully selected beauty & hair essentials you can trust.</p>
+      </div>
+      <div>
+        <h3>Affordable Prices</h3>
+        <p>High-quality products without breaking the bank.</p>
+      </div>
+      <div>
+        <h3>Fast Delivery</h3>
+        <p>Reliable shipping across Nigeria to your doorstep.</p>
+      </div>
+    </div>
+  </section>
+  <section class="cta" style="padding:80px 20px; text-align:center;">
+    <h2 style="color:#7f00ff; margin-bottom:30px;">Ready to Upgrade Your Beauty Routine?</h2>
+    <a href="Shop.html" class="btn">Explore Products</a>
+  </section>
 
   <script>
     document.addEventListener("DOMContentLoaded", function () {
       console.log("Welcome to PEONY STORES!");
     });
+    window.addEventListener('scroll', () => {
+    const scrollY = window.scrollY;
+    const docHeight = document.body.scrollHeight - window.innerHeight;
+    const scrollPercent = scrollY / docHeight;
+
+    // interpolate between two gradients
+    const startColor = [254,242,248]; // #fef2f8
+    const endColor = [127,0,255];     // #7f00ff
+    const r = Math.round(startColor[0] + (endColor[0]-startColor[0])*scrollPercent);
+    const g = Math.round(startColor[1] + (endColor[1]-startColor[1])*scrollPercent);
+    const b = Math.round(startColor[2] + (endColor[2]-startColor[2])*scrollPercent);
+
+    document.body.style.background = `rgb(${r},${g},${b})`;
+  });
   </script>
 
 </body>
 </html>
-
