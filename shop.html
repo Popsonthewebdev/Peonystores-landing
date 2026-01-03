@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Peony Stores | Shop</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:Segoe UI, Arial, sans-serif;
+}
+
+body{
+  background:#f6f6f6;
+  color:#222;
+}
+
+/* ===== HEADER ===== */
+header{
+  background:#fff;
+  padding:18px 20px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  position:sticky;
+  top:0;
+  z-index:100;
+  box-shadow:0 4px 12px rgba(0,0,0,0.08);
+}
+
+header h1{
+  font-size:22px;
+  font-weight:700;
+}
+
+/* ===== CART ICON ===== */
+.cart{
+  position:relative;
+  cursor:pointer;
+}
+
+.cart span{
+  position:absolute;
+  top:-6px;
+  right:-8px;
+  background:#e100ff;
+  color:#fff;
+  font-size:12px;
+  padding:2px 6px;
+  border-radius:50%;
+}
+
+/* ===== LAYOUT ===== */
+.container{
+  max-width:1200px;
+  margin:30px auto;
+  padding:0 20px;
+}
+
+.category{
+  margin-bottom:50px;
+}
+
+.category h2{
+  margin-bottom:15px;
+  border-left:6px solid #7f00ff;
+  padding-left:12px;
+}
+
+/* ===== PRODUCTS GRID ===== */
+.products{
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(160px,1fr));
+  gap:15px;
+}
+
+/* ===== PRODUCT CARD ===== */
+.card{
+  background:#fff;
+  border-radius:12px;
+  padding:12px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.08);
+  display:flex;
+  flex-direction:column;
+}
+
+.card img{
+  width:100%;
+  height:120px;
+  object-fit:cover;
+  border-radius:8px;
+  margin-bottom:8px;
+}
+
+.card h4{
+  font-size:14px;
+  margin-bottom:4px;
+}
+
+.price{
+  font-size:14px;
+  font-weight:600;
+  margin-bottom:6px;
+}
+
+button{
+  margin-top:auto;
+  padding:6px;
+  border:none;
+  border-radius:20px;
+  background:linear-gradient(135deg,#7f00ff,#e100ff);
+  color:#fff;
+  font-size:13px;
+  cursor:pointer;
+}
+button:hover{opacity:0.9}
+
+/* ===== MOBILE ===== */
+@media(max-width:600px){
+  header h1{font-size:18px;}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>Peony Stores</h1>
+  <div class="cart" onclick="goToCheckout()">
+    🛒 Cart <span id="cartCount">0</span>
+  </div>
+</header>
+
+<div class="container">
+
+<!-- ================= HAIR CARE ================= -->
+<section class="category">
+<h2>Hair Care – Extensions</h2>
+<div class="products">
+  <div class="card">
+    <img src="https://images.unsplash.com/photo-1580618672591-eb180b1a973f">
+    <h4>Attachment</h4>
+    <div class="price">₦2,500</div>
+    <button onclick="addToCart('Attachment',2500)">Add to Cart</button>
+  </div>
+
+  <div class="card">
+    <img src="https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f">
+    <h4>Brazilian Wool</h4>
+    <div class="price">₦3,000</div>
+    <button onclick="addToCart('Brazilian Wool',3000)">Add to Cart</button>
+  </div>
+
+  <div class="card">
+    <img src="https://images.unsplash.com/photo-1600180758890-6ec3c7c3a7f1">
+    <h4>Faux Locs</h4>
+    <div class="price">₦6,500</div>
+    <button onclick="addToCart('Faux Locs',6500)">Add to Cart</button>
+  </div>
+</div>
+</section>
+
+<!-- ================= HAIR PRODUCTS ================= -->
+<section class="category">
+<h2>Hair Products</h2>
+<div class="products">
+  <div class="card">
+    <img src="https://images.unsplash.com/photo-1616394584738-fc6e612e71b9">
+    <h4>Hair Cream</h4>
+    <div class="price">₦1,800</div>
+    <button onclick="addToCart('Hair Cream',1800)">Add to Cart</button>
+  </div>
+
+  <div class="card">
+    <img src="https://images.unsplash.com/photo-1600185365483-26d7c1d4b1d4">
+    <h4>Hair Oil</h4>
+    <div class="price">₦2,200</div>
+    <button onclick="addToCart('Hair Oil',2200)">Add to Cart</button>
+  </div>
+
+  <div class="card">
+    <img src="https://images.unsplash.com/photo-1620917669789-54c9a2e04c7a">
+    <h4>Hair Dye</h4>
+    <div class="price">₦3,500</div>
+    <button onclick="addToCart('Hair Dye',3500)">Add to Cart</button>
+  </div>
+</div>
+</section>
+
+<!-- ================= BODY SCENTS ================= -->
+<section class="category">
+<h2>Body Scents</h2>
+<div class="products">
+  <div class="card">
+    <img src="https://images.unsplash.com/photo-1594035910387-fea47794261f">
+    <h4>Perfume</h4>
+    <div class="price">₦8,000</div>
+    <button onclick="addToCart('Perfume',8000)">Add to Cart</button>
+  </div>
+
+  <div class="card">
+    <img src="https://images.unsplash.com/photo-1600180758895-3b36ef0b9c6f">
+    <h4>Body Mist</h4>
+    <div class="price">₦4,500</div>
+    <button onclick="addToCart('Body Mist',4500)">Add to Cart</button>
+  </div>
+</div>
+</section>
+
+</div>
+
+<script>
+function addToCart(name,price){
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+  let item = cart.find(p=>p.name===name);
+
+  if(item){ item.qty+=1 }
+  else{ cart.push({name,price,qty:1}) }
+
+  localStorage.setItem("cart",JSON.stringify(cart));
+  updateCartCount();
+}
+
+function updateCartCount(){
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+  let count = cart.reduce((sum,i)=>sum+i.qty,0);
+  document.getElementById("cartCount").innerText = count;
+}
+
+function goToCheckout(){
+  window.location.href="checkout.html";
+}
+
+updateCartCount();
+</script>
+
+</body>
+</html>
