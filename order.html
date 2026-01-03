@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Peony Stores | Admin Panel</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:Segoe UI, Arial, sans-serif;}
+body{background:#f6f6f6;color:#222;padding:20px;}
+h1{text-align:center;margin-bottom:20px;color:#7f00ff;}
+button{padding:6px 12px;border:none;border-radius:6px;background:#7f00ff;color:#fff;cursor:pointer;margin:4px;}
+button:hover{opacity:0.9;}
+input[type=date]{padding:6px 8px;margin-right:8px;border-radius:4px;border:1px solid #ccc;}
+table{width:100%;border-collapse:collapse;margin-top:12px;}
+th, td{border:1px solid #ddd;padding:8px;text-align:center;}
+th{background:#e100ff;color:#fff;}
+.status-btn{padding:4px 8px;border-radius:4px;}
+.status-pending{background:#ff9800;color:#fff;}
+.status-packed{background:#4caf50;color:#fff;}
+.status-completed{background:#2196f3;color:#fff;}
+</style>
+</head>
+<body>
+
+<h1>Peony Stores Admin Panel</h1>
+
+<div>
+  <label>From: <input type="date" id="startDate"></label>
+  <label>To: <input type="date" id="endDate"></label>
+  <button onclick="exportCSV()">Download CSV</button>
+</div>
+
+<table id="ordersTable">
+<thead>
+<tr>
+<th>Order ID</th>
+<th>Date</th>
+<th>Customer</th>
+<th>Phone</th>
+<th>Pick-Up</th>
+<th>Items</th>
+<th>Total (₦)</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+
+<script>
+// ===== LOAD ORDERS =====
+function loadOrders(){
+  let orders = JSON.parse(localStorage.getItem("orders")) || [];
+  let tbody = document.querySelector("#ordersTable tbody");
+  tbody.innerHTML="";
+
+  orders.forEach((order,index)=>{
+    let itemsList = order.items.map(i=>`${i.name} (${i.variant}) x${i.qty} @ ₦${i.price}`).join("\n");
+    let statusClass = order.status.toLowerCase();
+    let row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${order.orderId}</td>
+      <td>${order.date}</td>
+      <td>${order.customer.name}</td>
+      <td>${order.customer.phone}</td>
+      <td>${order.customer.pickup}</td>
+      <td>${itemsList.replace(/\n/g,"<br>")}</td>
+      <td>₦${order.total}</td>
+      <td><span class="status-btn status-${statusClass}">${order.status}</span></td>
+      <td>
+        <button onclick="updateStatus(${index}, 'Packed')">Packed</button>
+        <button onclick="updateStatus(${index}, 'Completed')">Completed</button>
+      </td>
+    `;
+    tbody.appendChild(row);
+  });
+}
+
+// ===== UPDATE STATUS =====
+function updateStatus(index, newStatus){
+  let orders = JSON.parse(localStorage.getItem("orders")) || [];
+  orders[index].status = newStatus;
+  localStorage.setItem("orders", JSON.stringify(orders));
+  loadOrders();
+}
+
+// ===== EXPORT CSV WITH DATE RANGE =====
+function exportCSV(){
+  let orders = JSON.parse(localStorage.getItem("orders")) || [];
+  if(orders.length===0){ alert("No orders to export!"); return; }
+
+  let start = document.getElementById("startDate").value;
+  let end = document.getElementById("endDate").value;
+
+  if(!start || !end){ alert("Please select both start and end dates."); return; }
+
+  let startDate = new Date(start);
+  let endDate = new Date(end);
+  // Include the whole day for endDate
+  endDate.setHours(23,59,59,999);
+
+  let csvContent = "Order ID,Date,Customer,Phone,Pick-Up,Items,Qty,Price,Subtotal,Total,Status\n";
+
+  orders.forEach(order=>{
+    let orderDate = new Date(order.date);
+    if(orderDate >= startDate && orderDate <= endDate){
+      order.items.forEach(i=>{
+        let subtotal = i.qty * i.price;
+        csvContent += `"${order.orderId}","${order.date}","${order.customer.name}","${order.customer.phone}","${order.customer.pickup}","${i.name} (${i.variant})","${i.qty}","${i.price}","${subtotal}","${order.total}","${order.status}"\n`;
+      });
+    }
+  });
+
+  let blob = new Blob([csvContent], {type:"text/csv;charset=utf-8;"});
+  let url = URL.createObjectURL(blob);
+  let link = document.createElement("a");
+  link.setAttribute("href", url);
+  link.setAttribute("download", `PeonyStores_Orders_${start}_to_${end}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+// INITIAL LOAD
+loadOrders();
+</script>
+
+</body>
+</html>
