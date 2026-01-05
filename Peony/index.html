@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Peony Stores</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Segoe UI", Arial, sans-serif;
+    }
+
+    body, html {
+      height: 100%;
+      overflow-x: hidden;
+    }
+
+    /* ===== FULL-PAGE PARALLAX BACKGROUND ===== */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url('images/text.jpg'); /* Your background image */
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed; /* parallax effect */
+      filter: blur(8px) brightness(0.7); /* blurred & slightly darkened */
+      z-index: -2; /* behind all content */
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      backdrop-filter: blur(2px); /* optional extra frosted blur */
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    /* ===== HEADER ===== */
+    header {
+      text-align: center;
+      padding: 60px 20px 30px;
+      position: relative;
+      z-index: 1;
+    }
+
+    header h1 span {
+      font-size: clamp(48px, 8vw, 110px);
+      font-weight: 700;
+      background-color: grey;
+      background-image: url("images/back.jpg");
+      background-size: cover;
+      background-repeat: no-repeat;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 6px 6px 12px rgba(0,0,0,0.4);
+      letter-spacing: 4px;
+      display: inline-block;
+    }
+
+    header .tagline {
+      margin-top: 15px;
+      font-size: 35px;
+      color: #fff;
+      text-shadow: 1px 1px 6px rgba(0,0,0,0.6);
+    }
+
+    /* ===== HERO ===== */
+    .hero {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 20px 80px;
+      text-align: center;
+      background: rgba(255,255,255,0.85);
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero p {
+      font-size: 18px;
+      line-height: 1.7;
+      margin-bottom: 40px;
+      color: #333;
+    }
+
+    /* ===== BUTTON ===== */
+    .btn {
+      display: inline-block;
+      padding: 14px 40px;
+      font-size: 18px;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 30px;
+      background: linear-gradient(135deg, #7f00ff, #e100ff);
+      transition: all 0.3s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+
+    /* ===== CATEGORIES ===== */
+    .categories {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 80px 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 25px;
+    }
+
+    .card {
+      position: relative;
+      overflow: hidden;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card img {
+      width: 100%;
+      height: 250px;
+      object-fit: cover;
+    }
+
+    .card:hover img {
+      transform: scale(1.05);
+    }
+
+    .card-overlay {
+      position: absolute;
+      bottom: 15px;
+      left: 15px;
+      color: #fff;
+      font-size: 20px;
+      font-weight: 700;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+      background: rgba(0,0,0,0.2);
+      padding: 8px 12px;
+      border-radius: 8px;
+    }
+
+    .categories a {
+      text-decoration: none;
+      color: #7f00ff;
+    }
+
+    /* ===== WHY US ===== */
+    .why-us {
+      padding: 80px 20px;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .why-us h2 {
+      color: #7f00ff;
+      margin-bottom: 50px;
+    }
+
+    .why-us div {
+      background: rgba(255,255,255,0.85);
+      border-radius: 15px;
+      padding: 30px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+
+    .why-us div h3 {
+      margin-bottom: 15px;
+      color: #333;
+    }
+
+    /* ===== CTA ===== */
+    .cta {
+      padding: 80px 20px;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cta h2 {
+      color: #7f00ff;
+      margin-bottom: 30px;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 600px) {
+      .hero p {
+        font-size: 16px;
+      }
+      .why-us div {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1><span>PEONY STORES</span></h1>
+    <p class="tagline">Quality Hair & Beauty Products</p>
+  </header>
+
+  <section class="hero">
+    <p>
+      Welcome to Peony Stores. We offer a wide variety of beauty essentials including
+      face and body care products, masks, hair conditioners, creams, soaps,
+      extensions, hair tools, unisex wear, bags, and much more.
+      Click the button below to explore our collection.
+    </p>
+    <a href="Shop.html" class="btn">Shop Now</a>
+  </section>
+
+  <section class="categories">
+    <h2 style="text-align:center; margin-bottom:40px; color:#7f00ff;">Our Collections</h2>
+    <div class="category-grid">
+
+      <!-- Hair Care -->
+      <a href="Shop.html">
+        <div class="card">
+          <svg viewBox="0 0 64 64" class="animated-gradient-svg">
+            <defs>
+              <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#7f00ff">
+                  <animate attributeName="stop-color" values="#7f00ff;#e100ff;#7f00ff" dur="3s" repeatCount="indefinite"/>
+                </stop>
+                <stop offset="100%" stop-color="#e100ff">
+                  <animate attributeName="stop-color" values="#e100ff;#7f00ff;#e100ff" dur="3s" repeatCount="indefinite"/>
+                </stop>
+              </linearGradient>
+            </defs>
+            <circle cx="32" cy="32" r="30" fill="url(#grad1)" />
+            <path d="M20 44c0-8 24-8 24-16s-24-8-24-16" stroke="#fff" stroke-width="4" fill="none"/>
+          </svg>
+          <div class="card-overlay">Hair Care</div>
+        </div>
+      </a>
+
+      <!-- Beauty & Skincare -->
+      <a href="Shop.html">
+        <div class="card">
+          <svg viewBox="0 0 64 64" class="animated-gradient-svg">
+            <defs>
+              <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#e100ff">
+                  <animate attributeName="stop-color" values="#e100ff;#7f00ff;#e100ff" dur="3s" repeatCount="indefinite"/>
+                </stop>
+                <stop offset="100%" stop-color="#7f00ff">
+                  <animate attributeName="stop-color" values="#7f00ff;#e100ff;#7f00ff" dur="3s" repeatCount="indefinite"/>
+                </stop>
+              </linearGradient>
+            </defs>
+            <rect x="8" y="8" width="48" height="48" rx="12" fill="url(#grad2)"/>
+            <circle cx="32" cy="32" r="12" fill="#fff"/>
+          </svg>
+          <div class="card-overlay">Beauty & Skincare</div>
+        </div>
+      </a>
+
+      <!-- Hair Extensions -->
+      <a href="Shop.html">
+        <div class="card">
+          <svg viewBox="0 0 64 64" class="animated-gradient-svg">
+            <defs>
+              <linearGradient id="grad3" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#7f00ff">
+                  <animate attributeName="stop-color" values="#7f00ff;#e100ff;#7f00ff" dur="3s" repeatCount="indefinite"/>
+                </stop>
+                <stop offset="100%" stop-color="#e100ff">
+                  <animate attributeName="stop-color" values="#e100ff;#7f00ff;#e100ff" dur="3s" repeatCount="indefinite"/>
+                </stop>
+              </linearGradient>
+            </defs>
+            <path d="M16 16c12 12 32 0 32 32" stroke="url(#grad3)" stroke-width="4" fill="none"/>
+            <path d="M32 16c12 12 0 32 0 32" stroke="url(#grad3)" stroke-width="4" fill="none"/>
+          </svg>
+          <div class="card-overlay">Hair Extensions</div>
+        </div>
+      </a>
+
+      <!-- Hair Tools -->
+      <a href="Shop.html">
+        <div class="card">
+          <svg viewBox="0 0 64 64" class="animated-gradient-svg">
+            <defs>
+              <linearGradient id="grad4" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#e100ff">
+                  <animate attributeName="stop-color" values="#e100ff;#7f00ff;#e100ff" dur="3s" repeatCount="indefinite"/>
+                </stop>
+                <stop offset="100%" stop-color="#7f00ff">
+                  <animate attributeName="stop-color" values="#7f00ff;#e100ff;#7f00ff" dur="3s" repeatCount="indefinite"/>
+                </stop>
+              </linearGradient>
+            </defs>
+            <rect x="20" y="8" width="8" height="48" fill="url(#grad4)"/>
+            <rect x="36" y="8" width="8" height="48" fill="url(#grad4)"/>
+            <circle cx="32" cy="32" r="10" fill="#fff"/>
+          </svg>
+          <div class="card-overlay">Hair Tools</div>
+        </div>
+      </a>
+
+      <!-- Unisex Wears -->
+      <a href="Shop.html">
+        <div class="card">
+          <svg viewBox="0 0 64 64" class="animated-gradient-svg">
+            <defs>
+              <linearGradient id="grad5" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#7f00ff">
+                  <animate attributeName="stop-color" values="#7f00ff;#e100ff;#7f00ff" dur="3s" repeatCount="indefinite"/>
+                </stop>
+                <stop offset="100%" stop-color="#e100ff">
+                  <animate attributeName="stop-color" values="#e100ff;#7f00ff;#e100ff" dur="3s" repeatCount="indefinite"/>
+                </stop>
+              </linearGradient>
+            </defs>
+            <rect x="12" y="16" width="40" height="32" rx="6" fill="url(#grad5)"/>
+            <circle cx="32" cy="28" r="8" fill="#fff"/>
+          </svg>
+          <div class="card-overlay">Unisex Wears</div>
+        </div>
+      </a>
+
+      <!-- Bags & Accessories -->
+      <a href="Shop.html">
+        <div class="card">
+          <svg viewBox="0 0 64 64" class="animated-gradient-svg">
+            <defs>
+              <linearGradient id="grad6" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#e100ff">
+                  <animate attributeName="stop-color" values="#e100ff;#7f00ff;#e100ff" dur="3s" repeatCount="indefinite"/>
+                </stop>
+                <stop offset="100%" stop-color="#7f00ff">
+                  <animate attributeName="stop-color" values="#7f00ff;#e100ff;#7f00ff" dur="3s" repeatCount="indefinite"/>
+                </stop>
+              </linearGradient>
+            </defs>
+            <path d="M16 24h32v24H16z" fill="url(#grad6)"/>
+            <path d="M24 24v-8h16v8" stroke="#fff" stroke-width="4" fill="none"/>
+          </svg>
+          <div class="card-overlay">Bags & Accessories</div>
+        </div>
+      </a>
+
+      <!-- Food Corner -->
+      <a href="Shop.html">
+        <div class="card">
+          <svg viewBox="0 0 64 64" class="animated-gradient-svg">
+            <defs>
+              <linearGradient id="grad7" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#7f00ff">
+                  <animate attributeName="stop-color" values="#7f00ff;#e100ff;#7f00ff" dur="3s" repeatCount="indefinite"/>
+                </stop>
+                <stop offset="100%" stop-color="#e100ff">
+                  <animate attributeName="stop-color" values="#e100ff;#7f00ff;#e100ff" dur="3s" repeatCount="indefinite"/>
+                </stop>
+              </linearGradient>
+            </defs>
+            <circle cx="32" cy="32" r="20" fill="url(#grad7)"/>
+            <path d="M24 32h16" stroke="#fff" stroke-width="4"/>
+            <path d="M32 24v16" stroke="#fff" stroke-width="4"/>
+          </svg>
+          <div class="card-overlay">Food Corner</div>
+        </div>
+      </a>
+
+      <!-- Others -->
+      <a href="Shop.html">
+        <div class="card">
+          <svg viewBox="0 0 64 64" class="animated-gradient-svg">
+            <defs>
+              <linearGradient id="grad8" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#e100ff">
+                  <animate attributeName="stop-color" values="#e100ff;#7f00ff;#e100ff" dur="3s" repeatCount="indefinite"/>
+                </stop>
+                <stop offset="100%" stop-color="#7f00ff">
+                  <animate attributeName="stop-color" values="#7f00ff;#e100ff;#7f00ff" dur="3s" repeatCount="indefinite"/>
+                </stop>
+              </linearGradient>
+            </defs>
+            <polygon points="32,8 56,56 8,56" fill="url(#grad8)"/>
+            <circle cx="32" cy="36" r="8" fill="#fff"/>
+          </svg>
+          <div class="card-overlay">Others</div>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <style>
+    /* SVG Hover Animation */
+    .card svg.animated-gradient-svg {
+      width: 100%;
+      height: 250px;
+      border-radius: 20px;
+      transition: transform 0.5s ease, filter 0.5s ease;
+    }
+
+    .card:hover svg.animated-gradient-svg {
+      transform: scale(1.1) rotate(5deg);
+      filter: brightness(1.2);
+    }
+
+    .card-overlay {
+      position: absolute;
+      bottom: 15px;
+      left: 15px;
+      color: #fff;
+      font-size: 20px;
+      font-weight: 700;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+      background: rgba(0,0,0,0.2);
+      padding: 8px 12px;
+      border-radius: 8px;
+    }
+  </style>
+
+  <section class="why-us">
+    <h2>Why Choose Peony Stores?</h2>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:30px; max-width:1000px; margin:0 auto;">
+      <div>
+        <h3>Premium Products</h3>
+        <p>Carefully selected beauty & hair essentials you can trust.</p>
+      </div>
+      <div>
+        <h3>Affordable Prices</h3>
+        <p>High-quality products without breaking the bank.</p>
+      </div>
+      <div>
+        <h3>Fast Delivery</h3>
+        <p>Reliable shipping across Nigeria to your doorstep.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta">
+    <h2>Ready to Upgrade Your Beauty Routine?</h2>
+    <a href="Shop.html" class="btn">Explore Products</a>
+  </section>
+
+</body>
+</html>

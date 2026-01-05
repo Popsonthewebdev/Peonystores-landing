@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Peony Stores – Shop</title>
+<style>
+/* keep your CSS as-is */
+body{margin:0;font-family:Arial,sans-serif;background:#f9f9f9}
+header{text-align:center;padding:35px 10px;background:linear-gradient(135deg,#7f00ff,#e100ff);color:#fff}
+header h1{margin:0;font-size:40px}
+header p{opacity:.9}
+.controls{max-width:1200px;margin:20px auto;display:flex;gap:10px;padding:0 10px}
+.controls input,.controls select{padding:10px;border-radius:8px;border:1px solid #ccc;flex:1}
+.products{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:15px;max-width:1200px;margin:auto;padding:10px}
+.product-card{background:#fff;padding:10px;border-radius:10px;box-shadow:0 6px 15px rgba(0,0,0,.08)}
+.product-card img{width:100%;height:140px;object-fit:cover;border-radius:8px}
+.product-card h3{font-size:15px;margin:5px 0}
+.product-card p{font-size:13px;margin:3px 0}
+.qty-container {display:flex;align-items:center;gap:5px;margin:5px 0;}
+.qty-container label{font-size:13px;font-weight:600;}
+.qty{width:50px;padding:5px;text-align:center;border-radius:5px;border:1px solid #ccc;}
+.qty-btn{padding:4px 7px;background:#7f00ff;color:#fff;border:none;border-radius:4px;cursor:pointer;}
+.qty-btn:hover{opacity:0.9;}
+.btn{width:100%;padding:8px;border:none;border-radius:6px;background:#7f00ff;color:#fff;cursor:pointer;}
+.btn:hover{opacity:.9}
+#checkoutBtn{display:block;margin:20px auto;padding:12px 30px;font-size:16}
+#cartModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);justify-content:center;align-items:center}
+.modal-content{background:#fff;padding:20px;border-radius:12px;width:90%;max-width:500px}
+.modal-content input{width:100%;padding:6px;margin:6px 0}
+.cart-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.cart-controls{display:flex;align-items:center;gap:5px;}
+#cartNotification{position:fixed;bottom:20px;right:20px;background:#7f00ff;color:#fff;padding:10px 15px;border-radius:6px;display:none;box-shadow:0 5px 15px rgba(0,0,0,.2);}
+#ordersModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);justify-content:center;align-items:center}
+#ordersList{max-height:300px;overflow-y:auto;padding-right:5px;margin-top:10px;font-size:14px;}
+.color-options {display:flex;gap:5px;margin:5px 0;}
+.color-swatch{width:20px;height:20px;border-radius:50%;border:2px solid #ccc;cursor:pointer;transition: transform 0.1s, border 0.2s;}
+.color-swatch.selected{border:3px solid #7f00ff;transform: scale(1.2);}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>PEONY STORES</h1>
+  <p>Quality Hair & Beauty Products – Pickup Only</p>
+</header>
+
+<div class="controls">
+  <input id="searchInput" placeholder="Search products…">
+  <select id="categoryFilter">
+    <option value="">All Categories</option>
+    <option>Hair Care</option>
+    <option>Facial & Body Care</option>
+    <option>Body Scents</option>
+    <option>Wears</option>
+    <option>Food Corner</option>
+    <option>Others</option>
+  </select>
+</div>
+
+<div class="products" id="products"></div>
+
+<button id="checkoutBtn" class="btn">Proceed to Checkout</button>
+<button id="myOrdersBtn" class="btn" style="margin:10px auto; display:block; background:#555">My Orders</button>
+
+<!-- CART MODAL -->
+<div id="cartModal">
+  <div class="modal-content">
+    <h3>Cart Summary</h3>
+    <div id="cartItems"></div>
+    <p><b>Total:</b> ₦<span id="cartTotal">0</span></p>
+    <input id="customerName" placeholder="Full Name">
+    <input id="customerPhone" placeholder="Phone Number">
+    <input id="customerEmail" placeholder="Email Address">
+    <input id="customerAddress" placeholder="Delivery Address">
+    <p style="font-size:13px;margin-top:10px">
+    <b>Make payment to:</b><br>
+    Bank: <b>GTBank</b><br>
+    Account Name: <b>Peony Stores</b><br>
+    Account Number: <b>0123456789</b>
+    </p>
+    <label style="font-size:13px">Upload payment receipt (link)</label>
+    <input id="receiptUrl" placeholder="Paste receipt URL here (optional)">
+    <button class="btn" onclick="confirmOrder()">Confirm Order & Get Order ID</button>
+    <button class="btn" style="background:#ccc;color:#000;margin-top:5px" onclick="closeModal()">Cancel</button>
+  </div>
+</div>
+
+<!-- ORDERS MODAL -->
+<div id="ordersModal">
+  <div class="modal-content">
+    <h3>My Orders</h3>
+    <input id="lookupPhone" placeholder="Enter your phone number to view orders">
+    <div id="ordersList"></div>
+    <button class="btn" onclick="closeOrders()" style="margin-top:10px">← Back to Shop</button>
+  </div>
+</div>
+
+<div id="cartNotification">Added to cart!</div>
+
+<script>
+let cart = [];
+
+const customerName = document.getElementById("customerName");
+const customerPhone = document.getElementById("customerPhone");
+const customerAddress = document.getElementById("customerAddress");
+const customerEmail = document.getElementById("customerEmail");
+const receiptUrl = document.getElementById("receiptUrl");
+
+async function getProducts() {
+  const res = await fetch("/.netlify/functions/products");
+  return await res.json();
+}
+
+async function renderProducts() {
+  const products = await getProducts();
+  const search = searchInput.value.toLowerCase();
+  const cat = categoryFilter.value;
+  const productsBox = document.getElementById("products");
+  productsBox.innerHTML = "";
+
+  products.forEach(p => {
+    if(search && !p.name.toLowerCase().includes(search)) return;
+    if(cat && p.category !== cat) return;
+
+    let colorHTML = '';
+    if(p.colors && p.colors.length > 0){
+      colorHTML = '<div class="color-options">';
+      p.colors.forEach(c => {
+        colorHTML += `<span class="color-swatch"
+                          data-product="${p.id}"
+                          data-color="${c}"
+                          style="background:${c};"
+                          title="${c}"></span>`;
+      });
+      colorHTML += '</div>';
+    }
+
+    productsBox.innerHTML += `
+      <div class="product-card">
+        <img src="${p.image}">
+        <h3>${p.name}</h3>
+        <p>₦${p.price}</p>
+        ${colorHTML}
+        <div class="qty-container">
+          <label>Qty:</label>
+          <button class="qty-btn" onclick="changeQty(${p.id},-1)">−</button>
+          <input type="number" id="qty-${p.id}" class="qty" min="1" value="1" data-id="${p.id}">
+          <button class="qty-btn" onclick="changeQty(${p.id},1)">+</button>
+        </div>
+        <button class="btn" onclick="addToCart(${p.id})">Add to Cart</button>
+      </div>`;
+  });
+  updateCartTotal();
+}
+
+function changeQty(id,delta){
+  const input = document.getElementById(`qty-${id}`);
+  let val = parseInt(input.value) || 1;
+  val += delta;
+  if(val<1) val = 1;
+  input.value = val;
+  updateCartTotal();
+}
+
+function addToCart(id){
+  const productElems = document.querySelectorAll(`.product-card`);
+  let product;
+  productElems.forEach(elem => {
+    if(elem.querySelector(`#qty-${id}`)) {
+      product = {
+        id,
+        name: elem.querySelector('h3').textContent,
+        price: parseFloat(elem.querySelector('p').textContent.replace('₦','')),
+        colors: []
+      }
+    }
+  });
+
+  const qty = parseInt(document.getElementById(`qty-${id}`).value);
+  if(qty<1){ alert("Invalid quantity"); return; }
+
+  const selectedSwatch = document.querySelector(`.color-swatch.selected[data-product='${id}']`);
+  const selectedColor = selectedSwatch ? selectedSwatch.dataset.color : null;
+
+  const item = cart.find(c => c.id === id);
+  if(item){
+    item.quantity += qty;
+    if(selectedColor) item.color = selectedColor;
+  } else {
+    cart.push({ ...product, quantity: qty, color: selectedColor });
+  }
+
+  document.querySelectorAll(`.color-swatch[data-product='${id}']`).forEach(s => s.classList.remove('selected'));
+
+  const notif = document.getElementById("cartNotification");
+  notif.style.display = "block";
+  setTimeout(()=>{notif.style.display="none"},1500);
+  updateCartTotal();
+}
+
+function updateCartTotal(){
+  let total=cart.reduce((a,b)=>a+b.price*b.quantity,0);
+  document.getElementById("cartTotal").textContent=total;
+}
+
+searchInput.oninput = renderProducts;
+categoryFilter.onchange = renderProducts;
+
+document.addEventListener('click', function(e){
+  if(e.target.classList.contains('color-swatch')){
+    const productId = e.target.dataset.product;
+    document.querySelectorAll(`.color-swatch[data-product='${productId}']`).forEach(s => s.classList.remove('selected'));
+    e.target.classList.add('selected');
+  }
+});
+
+checkoutBtn.onclick = renderCart;
+function renderCart(){
+  if(cart.length===0){alert("Cart empty"); return;}
+  const cartItemsDiv=document.getElementById("cartItems");
+  cartItemsDiv.innerHTML="";
+  cart.forEach((i,index)=>{
+    cartItemsDiv.innerHTML+=`
+      <div class="cart-row">
+        <div>
+          <b>${i.name}</b>${i.color ? `<br><span style="font-size:12px">Color: ${i.color}</span>`:""}<br>₦${i.price*i.quantity}
+        </div>
+        <div class="cart-controls">
+          <button onclick="changeCartItemQty(${index},-1)">−</button>
+          ${i.quantity}
+          <button onclick="changeCartItemQty(${index},1)">+</button>
+          <button onclick="removeItem(${index})" style="color:red">✕</button>
+        </div>
+      </div>`;
+  });
+  updateCartTotal();
+  cartModal.style.display="flex";
+}
+
+function changeCartItemQty(index,delta){
+  let item=cart[index];
+  item.quantity+=delta;
+  if(item.quantity<1) item.quantity=1;
+  renderCart();
+}
+
+function removeItem(index){cart.splice(index,1); renderCart()}
+function closeModal(){cartModal.style.display="none"}
+
+async function confirmOrder() {
+  if(!customerName.value||!customerPhone.value){alert("Fill required fields");return;}
+  const orderData = {
+    customer: customerName.value.trim(),
+    phone: customerPhone.value.trim(),
+    email: customerEmail.value.trim(),
+    address: customerAddress.value.trim(),
+    items: cart.map(i=>({id:i.id,name:i.name,price:i.price,quantity:i.quantity,color:i.color})),
+    total: cart.reduce((a,b)=>a+b.price*b.quantity,0),
+    status: receiptUrl.value ? "AWAITING CONFIRMATION" : "PENDING",
+    receipt_url: receiptUrl.value.trim(),
+    date: new Date().toLocaleString()
+  };
+
+  await fetch("/.netlify/functions/orders", {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify(orderData)
+  });
+
+  cart=[];
+  closeModal();
+  renderProducts();
+  alert("Order placed! Pickup at shop after payment confirmation.");
+}
+
+myOrdersBtn.onclick=()=>{ordersModal.style.display="flex"}
+function closeOrders(){ordersModal.style.display="none"; ordersList.innerHTML=""; lookupPhone.value=""; lookupPhone.blur();}
+lookupPhone.oninput=async ()=>{
+  const phone = lookupPhone.value;
+  if(!phone) { ordersList.innerHTML=""; return; }
+  const orders = await fetch(`/.netlify/functions/orders?phone=${phone}`).then(res=>res.json());
+  ordersList.innerHTML="";
+  if(orders.length===0){ordersList.innerHTML="<p>No orders found</p>"; return;}
+  orders.forEach(o=>{
+    let items=o.items.map(i=>`${i.name} ${i.color?`(${i.color})`:''} x${i.quantity}`).join(" | ");
+    ordersList.innerHTML+=`
+      <p><b>Order ID:</b> ${o.id}<br>
+         <b>Date:</b> ${o.date}<br>
+         <b>Total:</b> ₦${o.total}<br>
+         <b>Status:</b> ${o.status}<br>
+         <b>Items:</b> ${items}</p><hr>`;
+  });
+}
+
+renderProducts();
+</script>
+</body>
+</html>

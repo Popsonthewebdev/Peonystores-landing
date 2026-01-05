@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Login - Peony Stores</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background:#f9f9f9;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+}
+form {
+  background:#fff;
+  padding:30px;
+  border-radius:12px;
+  box-shadow:0 6px 15px rgba(0,0,0,0.1);
+  width:320px;
+}
+input[type="email"], input[type="password"] {
+  width:100%;
+  padding:10px;
+  margin:10px 0;
+  border-radius:6px;
+  border:1px solid #ccc;
+  transition: 0.2s;
+}
+input[type="email"].error, input[type="password"].error {
+  border-color: red;
+}
+button {
+  width:100%;
+  padding:10px;
+  border:none;
+  background:#7f00ff;
+  color:#fff;
+  border-radius:6px;
+  cursor:pointer;
+  transition: 0.2s;
+}
+button:disabled {
+  background:#b37fff;
+  cursor:not-allowed;
+}
+button:hover:not(:disabled) {
+  background:#e100ff;
+}
+.error {
+  color:red;
+  font-size:14px;
+  margin-top:5px;
+}
+.remember {
+  display:flex;
+  align-items:center;
+  margin:10px 0;
+}
+.remember input {
+  margin-right:5px;
+}
+</style>
+</head>
+<body>
+
+<form id="loginForm">
+  <h3>Admin Login</h3>
+  <input type="email" id="adminEmail" placeholder="Email" required>
+  <input type="password" id="adminPassword" placeholder="Password" required>
+  <div class="remember">
+    <input type="checkbox" id="rememberMe">
+    <label for="rememberMe">Remember Me</label>
+  </div>
+  <button type="submit" id="loginBtn">Login</button>
+  <p class="error" id="loginError"></p>
+</form>
+
+<script>
+// Hardcoded admin credentials
+const ADMIN_CREDENTIALS = {
+  email: "admin@peony.com",
+  password: "Peony@123"
+};
+
+const loginForm = document.getElementById("loginForm");
+const emailInput = document.getElementById("adminEmail");
+const passInput = document.getElementById("adminPassword");
+const errorMsg = document.getElementById("loginError");
+const loginBtn = document.getElementById("loginBtn");
+const rememberCheckbox = document.getElementById("rememberMe");
+
+// Pre-fill if previously remembered
+if(localStorage.getItem("rememberAdmin") === "true") {
+  emailInput.value = localStorage.getItem("adminEmail") || "";
+  passInput.value = localStorage.getItem("adminPassword") || "";
+  rememberCheckbox.checked = true;
+}
+
+loginForm.onsubmit = function(e){
+  e.preventDefault();
+
+  emailInput.classList.remove("error");
+  passInput.classList.remove("error");
+  errorMsg.textContent = "";
+  loginBtn.disabled = true;
+
+  const email = emailInput.value.trim();
+  const pass = passInput.value;
+
+  setTimeout(()=>{ // simulate processing delay
+    if(email === ADMIN_CREDENTIALS.email && pass === ADMIN_CREDENTIALS.password){
+      localStorage.setItem("isAdminLoggedIn", "true");
+
+      // Remember me
+      if(rememberCheckbox.checked){
+        localStorage.setItem("rememberAdmin", "true");
+        localStorage.setItem("adminEmail", email);
+        localStorage.setItem("adminPassword", pass);
+      } else {
+        localStorage.removeItem("rememberAdmin");
+        localStorage.removeItem("adminEmail");
+        localStorage.removeItem("adminPassword");
+      }
+
+      window.location.href = "admin.html";
+    } else {
+      errorMsg.textContent = "Invalid email or password";
+      if(email !== ADMIN_CREDENTIALS.email) emailInput.classList.add("error");
+      if(pass !== ADMIN_CREDENTIALS.password) passInput.classList.add("error");
+      loginBtn.disabled = false;
+    }
+  }, 300); // short delay to show button disabling effect
+}
+</script>
+
+</body>
+</html>
