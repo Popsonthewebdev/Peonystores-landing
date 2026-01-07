@@ -1,4 +1,4 @@
-<script type="module">
+<script type="module" src="admin.js"></script>
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
 import { getFirestore, collection, getDocs, getDoc, addDoc, updateDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
@@ -406,3 +406,4 @@ logoutBtn.addEventListener("click", async () => {
   window.location.href = "admin-auth.html";
 });
 </script>
+
