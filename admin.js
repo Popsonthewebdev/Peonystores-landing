@@ -1,4 +1,4 @@
-<script type="module" src="admin.js"></script>
+<script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
 import { getFirestore, collection, getDocs, getDoc, addDoc, updateDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
@@ -39,9 +39,10 @@ function compressImage(file, maxWidth = 800, quality = 0.7) {
 
 // CATEGORY & SUBCATEGORY
 const subcategories = {
-  "Hair Care":["Hair Extensions","Hair Products","Hair Styling Materials","Hair Maintenance Materials"],
-  "Facial & Body Care":["Facial Masks","Facial & Body Care Products","Facial & Body Care Materials"],
-  "Body Scents":["Perfumes","Body Mists","Body Sprays","Perfume Oil","Atomizer","Air Fresheners"],
+  "Hair Care":["Attachment",	"Brazilian wool",	"Wool attachment",	"Weave ons",	"Faux Locs",	"Kinky series",	" Baby wool",	" Hair cream",	" Hair gels/styling gels",	"Hair shampoo and conditioner",	" Hair combs",	" Hair oil",	" Hair sprays",	"Hair oil mask",	" Hair dyes",	" Hair styling materials",	" Hair beads",	"Hair bands/scrunchies",	" Hair pins/clips",	" Hair Rollers/ curlers",	" Hair care/maintenance materials",	" Hair spray bottle",	" Hair net",	" Hair bonnet",	" Edges brush",	" Durag",	" Shower caps",	" Mirrors"],
+  "Facial & Body Care":["facial mask",	"fruity facial mask",	"non-fruity",	" Eye mask",	"Lip mask",	" Mouthwash",	"Foot mask",	" lip oil",	"body oil and lotions",	"Body wash",	" 5-in1facial care set",	" Hand cream",	" Press on nails",	" Lip sticks/balms/ liner/gloss",	" Eye liners",	" Hand wash",	" Shaves/After shaves",	" Baby oil",	" Powders",	" Foot scrubber",	"Eyebrow razor      ",	" Nail file/cutter",	"face care portable bowl",	" Eye lash curler",	" Tongue scrappers",	" Body towels",	" Face towels",	" Soap case",	" Sponge"
+],
+  "Body Scents":[],
   "Wears":["Unisex","Male","Female"],
   "Food Corner":["Edibles","Drinks","Bake It Yourself"],
   "Others":["Miscellaneous"]
@@ -406,4 +407,5 @@ logoutBtn.addEventListener("click", async () => {
   window.location.href = "admin-auth.html";
 });
 </script>
+
 
