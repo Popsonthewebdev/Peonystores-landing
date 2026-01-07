@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
-<script type="module" src="admin.js"></script>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Peony Stores - Admin Panel</title>
+
 <style>
 body { font-family: Arial, sans-serif; background:#f9f9f9; margin:0; padding:20px; }
 h1 { text-align:center; margin-bottom:20px; }
@@ -20,6 +20,7 @@ th { background:#7f00ff; color:#fff; }
 .filter-dropdown div:hover { background:#f0f0f0; }
 </style>
 </head>
+
 <body>
 
 <h1>Peony Stores - Admin Panel</h1>
@@ -31,6 +32,7 @@ th { background:#7f00ff; color:#fff; }
 
   <input type="text" id="productName" placeholder="Product Name" required>
   <textarea id="descriptionInput" placeholder="Product Description" rows="3"></textarea>
+
   <select id="categorySelect" required>
     <option value="">Select Category</option>
     <option value="Hair Care">Hair Care</option>
@@ -40,6 +42,7 @@ th { background:#7f00ff; color:#fff; }
     <option value="Food Corner">Food Corner</option>
     <option value="Others">Others</option>
   </select>
+
   <select id="subcategorySelect" required>
     <option value="">Select Subcategory</option>
   </select>
@@ -48,7 +51,7 @@ th { background:#7f00ff; color:#fff; }
   <input type="text" id="sizesInput" placeholder="Sizes (comma separated e.g. S,M,L,XL)">
   <input type="number" id="priceInput" placeholder="Price (₦)" required>
   <input type="number" id="stockInput" placeholder="Stock Quantity" required>
-  
+
   <label>Product Image:</label>
   <input type="file" id="imageFileInput" accept="image/*">
   <input type="text" id="imageURLInput" placeholder="Or paste image URL">
@@ -77,26 +80,31 @@ th { background:#7f00ff; color:#fff; }
 <!-- Orders Table -->
 <h3>Orders</h3>
 <label>From: <input type="date" id="csvFromDate"></label>
-<label>To: <input type="date"  id="csvToDate"></label>
+<label>To: <input type="date" id="csvToDate"></label>
+
 <button onclick="downloadCSV()">Download Orders CSV</button>
 <button onclick="resetAllFilters()">Reset All Filters</button>
 <button id="logoutBtn" style="background:#e100ff;">Logout</button>
+
 <table id="ordersTable">
-<thead>
-  <tr>
-    <th data-column="id">Order ID</th>
-    <th data-column="customer">Customer</th>
-    <th data-column="phone">Phone</th>
-    <th data-column="address">Address</th>
-    <th data-column="items">Items</th>
-    <th data-column="total">Total</th>
-    <th data-column="status">Status</th>
-    <th data-column="receipt_url">Receipt</th>
-    <th data-column="date">Date</th>
-  </tr>
-</thead>
+  <thead>
+    <tr>
+      <th data-column="id">Order ID</th>
+      <th data-column="customer">Customer</th>
+      <th data-column="phone">Phone</th>
+      <th data-column="address">Address</th>
+      <th data-column="items">Items</th>
+      <th data-column="total">Total</th>
+      <th data-column="status">Status</th>
+      <th data-column="receipt_url">Receipt</th>
+      <th data-column="date">Date</th>
+    </tr>
+  </thead>
   <tbody></tbody>
 </table>
+
+<!-- ✅ SCRIPT LOADED AFTER DOM -->
+<script type="module" src="admin.js"></script>
 
 </body>
 </html>
