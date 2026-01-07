@@ -38,28 +38,45 @@ function compressImage(file, maxWidth = 800, quality = 0.7) {
 }
 
 // CATEGORY & SUBCATEGORY
-const subcategories = {
-  "Hair Care":["Attachment",	"Brazilian wool",	"Wool attachment",	"Weave ons",	"Faux Locs",	"Kinky series",	" Baby wool",	" Hair cream",	" Hair gels/styling gels",	"Hair shampoo and conditioner",	" Hair combs",	" Hair oil",	" Hair sprays",	"Hair oil mask",	" Hair dyes",	" Hair styling materials",	" Hair beads",	"Hair bands/scrunchies",	" Hair pins/clips",	" Hair Rollers/ curlers",	" Hair care/maintenance materials",	" Hair spray bottle",	" Hair net",	" Hair bonnet",	" Edges brush",	" Durag",	" Shower caps",	" Mirrors"],
-  "Facial & Body Care":["facial mask",	"fruity facial mask",	"non-fruity",	" Eye mask",	"Lip mask",	" Mouthwash",	"Foot mask",	" lip oil",	"body oil and lotions",	"Body wash",	" 5-in1facial care set",	" Hand cream",	" Press on nails",	" Lip sticks/balms/ liner/gloss",	" Eye liners",	" Hand wash",	" Shaves/After shaves",	" Baby oil",	" Powders",	" Foot scrubber",	"Eyebrow razor      ",	" Nail file/cutter",	"face care portable bowl",	" Eye lash curler",	" Tongue scrappers",	" Body towels",	" Face towels",	" Soap case",	" Sponge"
-],
-  "Body Scents":[],
-  "Wears":["Unisex","Male","Female"],
-  "Food Corner":["Edibles","Drinks","Bake It Yourself"],
-  "Others":["Miscellaneous"]
-};
+const rawSubcategories = {
+  "Hair Care": ["Attachment", "Brazilian wool", "Wool attachment", "Weave ons", "Faux Locs", "Kinky series", "Baby wool", "Hair cream", "Hair gels/styling gels", "Hair shampoo and conditioner", "Hair combs", "Hair oil", "Hair sprays", "Hair oil mask", "Hair dyes", "Hair styling materials", "Hair beads", "Hair bands/scrunchies", "Hair pins/clips", "Hair Rollers/ curlers", "Hair care/maintenance materials", "Hair spray bottle", "Hair net", "Hair bonnet", "Edges brush", "Durag", "Shower caps", "Mirrors"],
 
+  "Facial & Body Care": ["facial mask", "fruity facial mask", "non-fruity", "Eye mask", "Lip mask", "Mouthwash", "Foot mask", "lip oil", "body oil and lotions", "Body wash", "5-in1 facial care set", "Hand cream", "Press on nails", "Lip sticks/balms/ liner/gloss", "Eye liners", "Hand wash", "Shaves/After shaves", "Baby oil", "Powders", "Foot scrubber", "Eyebrow razor", "Nail file/cutter", "face care portable bowl", "Eye lash curler", "Tongue scrappers", "Body towels", "Face towels", "Soap case", "Sponge"],
+
+  "Body Scents": ["Perfumes", "Body mists", "Body sprays", "Perfume oil", "Atomizer", "Air fresheners"],
+
+  "Wears": ["Body towels", "Face towels", "Face caps", "Scarfs", "Bandanas", "Jersey shorts", "Socks", "Bags", "Male 3-in-1 designer briefs", "Male condom boxers", "Male cotton boxers", "Male cotton shorts", "Male cotton T-Shirts / vests / polos", "Male quality up and down", "Female corporate gowns", "Female tops", "Female skirts"],
+
+  "Food Corner": ["Chinchin", "Cakes", "Groundnuts", "Bottled water", "Soda", "Wines", "Fruit juice", "Flour", "Preservatives", "Flavor", "Milk flavor", "Asun plates", "Wine cups", "Cookie cutter", "Icing sugar", "Icing nozzles", "Margarine", "Baking powder", "Yeast", "Sugar", "Cupcake containers", "Foil containers", "Fruit punch flavor"],
+
+  "Others": ["Shoe polish/cream", "Rechargeable hand fan", "Welcome carpet", "Sanitary towels", "Mannequin"]
+};
+const subcategories = Object.fromEntries(
+  Object.entries(rawSubcategories).map(([cat, subs]) => [
+    cat.trim(),
+    subs.map(s => s.trim())
+  ])
+);
 const categorySelect = document.getElementById("categorySelect");
 const subcategorySelect = document.getElementById("subcategorySelect");
-categorySelect.addEventListener("change", ()=>{
-  const cat = categorySelect.value;
-  subcategorySelect.innerHTML = '<option value="">Select Subcategory</option>';
-  subcategories[cat]?.forEach(sub=>{
+function populateSubcategories(category, selected = "") {
+  subcategorySelect.innerHTML =
+    '<option value="">Select Subcategory</option>';
+
+  if (!category || !subcategories[category]) return;
+
+  subcategories[category].forEach(sub => {
     const opt = document.createElement("option");
-    opt.value = sub; opt.textContent = sub;
+    opt.value = sub;
+    opt.textContent = sub;
+    if (sub === selected) opt.selected = true;
     subcategorySelect.appendChild(opt);
   });
-});
+}
 
+categorySelect.addEventListener("change", () => {
+  populateSubcategories(categorySelect.value.trim());
+});
 // PRODUCT MANAGEMENT
 const addForm = document.getElementById("addProductForm");
 addForm.addEventListener("submit", e=>{
@@ -69,18 +86,35 @@ addForm.addEventListener("submit", e=>{
   const editingIndex = document.getElementById("editingIndex").value;
 
   async function finalizeSave(imageData){
-    const productData = {
-      name: productName.value,
-      description: descriptionInput.value.trim(),
-      category: categorySelect.value,
-      subcategory: subcategorySelect.value,
-      colors: colorsInput.value.split(",").map(c=>c.trim()).filter(Boolean),
-      sizes: sizesInput.value.split(",").map(s=>s.trim()).filter(Boolean),
-      price: Number(priceInput.value),
-      stock: Number(stockInput.value),
-      image: imageData || ""
-    };
+if (!categorySelect.value) {
+  alert("Please select a category");
+  return;
+}
 
+if (!subcategorySelect.value) {
+  alert("Please select a subcategory");
+  return;
+}
+const productData = {
+  name: productName.value.trim(),
+  description: descriptionInput.value.trim(),
+  category: categorySelect.value.trim(),
+  subcategory: subcategorySelect.value.trim(),
+
+  categorySlug: categorySelect.value
+    .toLowerCase()
+    .replace(/\s+/g, "-"),
+
+  subcategorySlug: subcategorySelect.value
+    .toLowerCase()
+    .replace(/\s+/g, "-"),
+
+  colors: colorsInput.value.split(",").map(c=>c.trim()).filter(Boolean),
+  sizes: sizesInput.value.split(",").map(s=>s.trim()).filter(Boolean),
+  price: Number(priceInput.value),
+  stock: Number(stockInput.value),
+  image: imageData || ""
+};
     if(editingIndex){
       await updateDoc(doc(db,"products",editingIndex), productData);
     } else {
@@ -130,16 +164,12 @@ async function editProduct(id){
 
   productName.value = p.name;
   descriptionInput.value = p.description || "";
-  categorySelect.value = p.category;
 
-  subcategorySelect.innerHTML = '<option value="">Select Subcategory</option>';
-  subcategories[p.category]?.forEach(sub=>{
-    const opt = document.createElement("option");
-    opt.value = sub; opt.textContent = sub;
-    subcategorySelect.appendChild(opt);
-  });
-
-  subcategorySelect.value = p.subcategory;
+  categorySelect.value = p.category.trim();
+populateSubcategories(
+  p.category.trim(),
+  p.subcategory?.trim() || ""
+);
   colorsInput.value = (p.colors||[]).join(", ");
   sizesInput.value = (p.sizes||[]).join(", ");
   priceInput.value = p.price;
@@ -406,6 +436,12 @@ logoutBtn.addEventListener("click", async () => {
   await signOut(auth);
   window.location.href = "admin-auth.html";
 });
+window.editProduct = editProduct;
+window.deleteProduct = deleteProduct;
+window.updateOrderStatus = updateOrderStatus;
+window.downloadCSV = downloadCSV;
+window.resetAllFilters = resetAllFilters;
 </script>
+
 
 
